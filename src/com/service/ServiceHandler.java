@@ -1,4 +1,4 @@
-package com.mina;
+package com.service;
 
 import java.math.BigDecimal;
 import java.net.URLDecoder;
@@ -12,14 +12,14 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.springframework.core.ErrorCoded;
 
-import com.service.ConfigService;
-import com.service.MessageService;
-import com.service.loginJudge;
+import com.service.config.ConfigService;
 
 
 
 public class ServiceHandler extends IoHandlerAdapter 
 {
+	public NioSocketAcceptor socketAcceptor;
+
 	public ServiceHandler()
 	{
 		//log = Logger.getLogger(ServiceHandler.class.getName());

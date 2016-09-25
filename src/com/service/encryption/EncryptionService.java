@@ -2,7 +2,7 @@ package com.service.encryption;
 
 import java.util.Base64;
 
-import com.service.ConfigService;
+import com.service.config.configs.SecretKeyConfig;
 
 import net.sf.json.JSONObject;
 
@@ -27,7 +27,7 @@ public class EncryptionService
 			
 			//加密种子
 			byte[] key = desKey.getBytes();  
-			byte[] encodedData = RSACoder.encryptByPrivateKey(key, ConfigService.RSA_private_key);
+			byte[] encodedData = RSACoder.encryptByPrivateKey(key, SecretKeyConfig.RSA_private_key);
 			String encryptionMsg = Base64.getEncoder().encodeToString(encodedData);
 			
 			encryption.put("securityKey", encryptionMsg);
@@ -54,7 +54,7 @@ public class EncryptionService
 			//解密DESkey
 			byte[] data =  securityKey.getBytes();
 			
-			desKey = new String(RSACoder.decryptByPrivateKey(data, ConfigService.RSA_private_key));
+			desKey = new String(RSACoder.decryptByPrivateKey(data, SecretKeyConfig.RSA_private_key));
 			
 			//用DESkey解密报文
 			byte[] key = securityData.getBytes();

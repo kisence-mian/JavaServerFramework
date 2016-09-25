@@ -17,7 +17,8 @@ import java.util.Map;
 
 import javax.crypto.Cipher;
 
-import service.config.ConfigService;
+import com.service.config.configs.SecretKeyConfig;
+
 
 /**
  * RSA安全编码组件
@@ -31,8 +32,8 @@ public abstract class RSACoder extends Coder
 	public static final String KEY_ALGORITHM = "RSA";
 	public static final String SIGNATURE_ALGORITHM = "MD5withRSA";
 
-	private static final String PUBLIC_KEY = ConfigService.RSA_public_key;
-	private static final String PRIVATE_KEY = ConfigService.RSA_private_key;
+	private static final String PUBLIC_KEY = SecretKeyConfig.RSA_public_key;
+	private static final String PRIVATE_KEY = SecretKeyConfig.RSA_private_key;
 
 	/**
 	 * 用私钥对信息生成数字签名

@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.example.tapedeck.PlayCommand;
 
+import com.service.config.ConfigService;
 import com.service.encryption.EncryptionService;
 
 import net.sf.json.JSONObject;
@@ -32,10 +33,7 @@ public class MessageService
 	//加密发送
 	void send(IoSession session,String message)
 	{
-		if(ConfigService.isDebug)
-		{
-			System.out.println("发送数据: " + message);
-		}
+
 		
 		if(session != null)
 		{
@@ -48,17 +46,11 @@ public class MessageService
 	{
 		try 
 		{
-			if(ConfigService.isDebug)
-			{
-				System.out.println("发送数据: " + message);
-			}
+
 			
 			JSONObject encryption = EncryptionService.Encryption(message);
 			
-			if(ConfigService.isDebug)
-			{
-				System.out.println("发送数据 加密: " + encryption.toString());
-			}
+
 			
 			if(session != null)
 			{

@@ -1,4 +1,4 @@
-package com.mina;
+package com.service;
 
 import java.net.InetSocketAddress;
 import java.nio.charset.Charset;
@@ -14,8 +14,8 @@ import org.apache.mina.filter.executor.ExecutorFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
-import service.config.ConfigService;
-import serviceHandler.ServiceHandler;
+import com.service.config.ConfigService;
+
 
 ///import com.handler.ServerHandler;
 
@@ -46,15 +46,13 @@ public class Service
 		socketAcceptor.setReuseAddress(true);
 		socketAcceptor.getSessionConfig().setKeepAlive(true);
 		
-		
-//		socketAcceptor.set
 
 		// 绑定逻辑处理器，主要的逻辑都在handler里面
 		handler = new ServiceHandler();
 		socketAcceptor.setHandler(handler);
 		handler.socketAcceptor = socketAcceptor;
 		
-		socketAcceptor.setBacklog(ConfigService.MAX_CONNECTOR);
+//		socketAcceptor.setBacklog(ConfigService.MAX_CONNECTOR);
 
 	//	socketAcceptor.getFilterChain().addLast("logger", new LoggingFilter());
 //		socketAcceptor.getFilterChain().addLast("json",
@@ -73,10 +71,8 @@ public class Service
 																	    // 1M=1024*1024
 		socketAcceptor.getSessionConfig().setReceiveBufferSize(1024*10);// 接收缓冲区1kb
 		
-		
+		log.error("服务器启动~~~\n服务器版本 ： 2016/9/25");
 		log.error( "处理核心数： " + Runtime.getRuntime().availableProcessors());
-
-		log.error("服务器启动~~~\n服务器版本 ： 2016/7/20");
 	}
 	
 	public void startService()
@@ -84,7 +80,7 @@ public class Service
 		socketAcceptor.getManagedSessions();
 		try {
 			// 端口绑定。
-			socketAcceptor.bind(new InetSocketAddress(ConfigService.Port));
+//			socketAcceptor.bind(new InetSocketAddress(ConfigService.Port));
 			
 		} catch (Exception e) {
 			e.printStackTrace();

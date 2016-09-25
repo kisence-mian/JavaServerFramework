@@ -1,0 +1,4 @@
+DataBaseURL  = jdbc:mysql://114.215.131.149
+DataBaseName = slimeDataBase
+UserName     = root
+PWD          = 88355352
