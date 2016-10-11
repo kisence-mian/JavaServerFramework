@@ -6,11 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import com.frameWork.dataBase.ConnectionPool.PooledConnection;
-import com.frameWork.service.config.configs.ConfigLog;
+import com.frameWork.service.LogService;
 import com.frameWork.service.config.configs.DataBaseConfig;
 import com.frameWork.service.timer.TimerEvent;
 import com.frameWork.service.timer.TimerEventListener;
@@ -19,38 +17,140 @@ import com.frameWork.service.timer.TimerService.TimerEnum;
 
 public class DatabaseService implements TimerEventListener
 {
-
-	String driverString ="com.mysql.jdbc.Driver";
-
-	List<String> SQLlist = new ArrayList<String>();
-	List<String> errorSQLlist = new ArrayList<String>();
+	String m_ModelName = "DataBaseService";
 	
-	static DatabaseService instance;
-	public static DatabaseService getInstance() 
+	String m_DriverString ="com.mysql.jdbc.Driver";
+
+	List<String> m_SQLlist = new ArrayList<String>();
+	List<String> m_ErrorSQLlist = new ArrayList<String>();
+	
+	static DatabaseService m_Instance;
+	public static DatabaseService GetInstance() 
 	{
-		if(instance == null)
+		if(m_Instance == null)
 		{
-			instance = new DatabaseService();
-			instance.Init();
+			m_Instance = new DatabaseService();
+			m_Instance.Init();
 		}
-		return instance;
+		return m_Instance;
 	}
 	
 	@Override
 	public void TimeEvent(TimerEvent event) 
 	{
-		timertask();
+		Timertask();
 	}
 	
 	public void Init()
 	{
 		TimerService.AddListener(TimerEnum.preSecond, this);
 	}
+	
+	//增
+	public void InsertData(String tableName,String[] keyValue) 
+	{
+		String SQL = "INSERT INTO " + DataBaseConfig.s_DataBaseName + "." + tableName ;
+        					
+        String Value = "";
+        String Keys = "";
+       
+       for (int i = 0; i < keyValue.length; i++) 
+       {
+    	   if(i%2 == 0)
+    	   {
+    		   Keys += keyValue[i];
+    	   }
+    	   else
+    	   {
+    		   Value += keyValue[i];
+    	   }
+    	   
+    	   if(i != keyValue.length - 1)
+    	   {
+    		   if(i%2 == 0)
+        	   {
+        		   Keys += ",";
+        	   }
+        	   else
+        	   {
+        		   Value += ",";
+        	   }
+    	   }
+       }
+        					
+       SQL = SQL + "(" + Keys + ")" + "VALUES" + "(" + Value + ");";				
+
+       ExecuteUpdate(SQL);
+	}
+	
+	//删
+	public void DeleteData(String tableName,String where)
+	{
+		String SQL = "DELETE FROM " + DataBaseConfig.s_DataBaseName + "." + tableName;
+		
+		SQL = SQL + " WHERE " + where;
+		
+		ExecuteUpdate(SQL);
+	}
+	
+	//改
+	public void UpdateData(String tableName,String[] keyValue,String where)
+	{
+		String SQL = "UPDATE " + DataBaseConfig.s_DataBaseName + "." + tableName + " set ";
+		String values = "";
+		
+		for (int i = 0; i < keyValue.length; i += 2) 
+		{
+			values += keyValue[i] + " = " + keyValue[i + 1];
+			
+			if( i + 2 != keyValue.length - 1)
+			{
+				values += ",";
+			}
+		}
+		
+		SQL = SQL + values + " WHERE " + where;
+		
+		ExecuteUpdate(SQL);
+	}
+	
+	//查
+	public  List<Map<String, Object>> SelectData(String tableName,String[] keys,String where) 
+	{
+		String SQL = "SELECT ";
+		String keyString = "";
+		
+		if(keys == null || keys.length == 0)
+		{
+			keyString = "*";
+		}
+		
+		for (int i = 0; i < keys.length; i++) 
+		{
+			keyString += keys[i];
+			
+			if(i != keys.length - 1)
+			{
+				keyString += ",";
+			}
+		}
+		
+		if(where != null && where != "")
+		{
+			SQL = SQL + keyString + "FROM " + DataBaseConfig.s_DataBaseName + "." + tableName + " WHERE " + where;
+		}
+		else
+		{
+			SQL = SQL + keyString + "FROM " + DataBaseConfig.s_DataBaseName + "." + tableName;
+		}
+		
+		return ExecuteQuery(SQL);
+	}
 
 	//查询数据库，返回结果
-	public List<Map<String, Object>> executeQuery(String sql)
+	public List<Map<String, Object>> ExecuteQuery(String sql)
 	{
-		List<Map<String, Object>> list = new ArrayList(); 
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>(); 
 		
 		PooledConnection connection = null;
 		
@@ -63,11 +163,9 @@ public class DatabaseService implements TimerEventListener
 			list = Ret2Map(rs);
 			rs.close();
 			
-			if(ConfigLog.s_isDebug)
-			{
-				long useTime = (System.currentTimeMillis() - time)/1000;
-//				System.out.println("数据库返回         用时" + useTime + "s");
-			}
+			long useTime = (System.currentTimeMillis() - time)/1000;
+			LogService.Log(m_ModelName,"数据库返回         用时" + useTime + "s");
+
 		} 
 		catch ( Exception e)
 		{
@@ -81,14 +179,16 @@ public class DatabaseService implements TimerEventListener
 		return list;
 	
 	}
+	
 	//操作数据库
-	public void executeUpdate(String sql)
+	public void ExecuteUpdate(String sql)
 	{
-		SQLlist.add(sql);
+		m_SQLlist.add(sql);
 	}
-	void timertask()
+	
+	void Timertask()
 	{
-		if(SQLlist.size() > 0)
+		if(m_SQLlist.size() > 0)
 		{
 			PooledConnection connection = null;
 			
@@ -98,27 +198,27 @@ public class DatabaseService implements TimerEventListener
 				
 				connection = DBManager.getConnection();
 	            //依次执行传入的SQL语句  
-	            for (int i = 0; i < SQLlist.size(); i++) 
+	            for (int i = 0; i < m_SQLlist.size(); i++) 
 	            {  
-	            	connection.executeUpdate(SQLlist.get(i));
+	            	connection.executeUpdate(m_SQLlist.get(i));
 	            }
 	            
 	            long useTime = (System.currentTimeMillis() - time)/1000;
 	            
-		        System.out.print("sql 操作成功 操作数："+ SQLlist.size()+"用时" + useTime + "s \n");
+	            LogService.Log(m_ModelName , "sql 操作成功 操作数："+ m_SQLlist.size()+"用时" + useTime + "s ");
 			} 
 			catch ( Exception e) 
 			{
-				for (int i = 0; i < SQLlist.size() &&  i < DataBaseConfig.s_dataBaseMaxRequest; i++) 
+				for (int i = 0; i < m_SQLlist.size() &&  i < DataBaseConfig.s_dataBaseMaxRequest; i++) 
 	            { 
-					System.out.println(SQLlist.get(i));
+					LogService.Error(m_ModelName , m_SQLlist.get(i));
 	            }
 				
-				System.out.println("sql error :\n" + e.toString());
+				LogService.Exception(m_ModelName , "SQL Exception" + e.toString() , e );
 			}
 			finally
 			{
-				SQLlist.clear();
+				m_SQLlist.clear();
 				connection.close();
 			}
 		}
@@ -127,7 +227,7 @@ public class DatabaseService implements TimerEventListener
 	
 	public List<Map<String, Object>> Ret2Map(ResultSet rs) 
 	{
-		List<Map<String, Object>> list = new ArrayList(); 
+		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>(); 
 		try
 		{
 		
@@ -138,7 +238,7 @@ public class DatabaseService implements TimerEventListener
 			 while (rs.next()) 
 			 {
 	
-			    Map<String, Object> map = new HashMap(); 
+			    Map<String, Object> map = new HashMap<String, Object>(); 
 			 
 			    for (int i = 1; i <= columnCount; i++)
 			    {
@@ -151,32 +251,9 @@ public class DatabaseService implements TimerEventListener
 		} 
 		catch (Exception e)
 		{
-			// TODO: handle exception
+			e.printStackTrace();
 		}
 		
 		 return list;
 	}
-	
-	//改增加某些属性
-	public void addSomeProperty(String PropertyName,String playerID,int changeNumber) 
-	{
-		String operationString = "";
-		
-		if(changeNumber>=0)
-		{
-			operationString = " + ";
-		}
-		
-		String sqlString = "update "
-				+DataBaseConfig.s_DataBaseName +".player "
-				+" set "
-					+ DataBaseConfig.s_DataBaseName +".player"+ "." + PropertyName 
-					+ " = " 
-					+ DataBaseConfig.s_DataBaseName +".player"+ "." + PropertyName +operationString + changeNumber
-				+  " where "
-				+DataBaseConfig.s_DataBaseName +".player.ID = " +"'"+playerID+"'";
-		
-		executeUpdate(sqlString);
-	}
-
 }
