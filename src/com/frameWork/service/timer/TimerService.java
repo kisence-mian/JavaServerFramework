@@ -24,10 +24,14 @@ public class TimerService
 	
 	public TimerService()
 	{
+	}
+	
+	public static void Init() 
+	{
 		try
         {
 		  Timer timer = new Timer();  //定时任务启动
-		  System.out.println("-------定时器启动--------");  
+		  System.out.println("Timer启动");  
 		  timer.schedule(new TimerTask()
 		  {
 		        public void run() 

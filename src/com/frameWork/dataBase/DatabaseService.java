@@ -15,7 +15,7 @@ import com.frameWork.service.timer.TimerEventListener;
 import com.frameWork.service.timer.TimerService;
 import com.frameWork.service.timer.TimerService.TimerEnum;
 
-public class DatabaseService implements TimerEventListener
+public class DatabaseService 
 {
 	String m_ModelName = "DataBaseService";
 	
@@ -35,15 +35,11 @@ public class DatabaseService implements TimerEventListener
 		return m_Instance;
 	}
 	
-	@Override
-	public void TimeEvent(TimerEvent event) 
-	{
-		Timertask();
-	}
-	
+
 	public void Init()
 	{
-		TimerService.AddListener(TimerEnum.preSecond, this);
+		DataBaseTimerListener dataBaseTimerListener = new DataBaseTimerListener();
+		TimerService.AddListener(TimerEnum.preDay, dataBaseTimerListener);
 	}
 	
 	//Ôö
@@ -186,7 +182,7 @@ public class DatabaseService implements TimerEventListener
 		m_SQLlist.add(sql);
 	}
 	
-	void Timertask()
+	void TimerTask()
 	{
 		if(m_SQLlist.size() > 0)
 		{
@@ -256,4 +252,16 @@ public class DatabaseService implements TimerEventListener
 		
 		 return list;
 	}
+}
+
+class DataBaseTimerListener implements TimerEventListener
+{
+
+	@Override
+	public void TimeEvent(TimerEvent event) 
+	{
+		DatabaseService.GetInstance().TimerTask();
+		
+	}
+	
 }

@@ -1,7 +1,6 @@
 package com.frameWork.service;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -13,16 +12,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.omg.PortableServer.ID_ASSIGNMENT_POLICY_ID;
-
 import com.frameWork.service.LogService.LogLevel;
-import com.frameWork.service.config.configs.ConfigLog;
+import com.frameWork.service.config.configs.LogConfig;
+import com.frameWork.service.timer.TimerEvent;
+import com.frameWork.service.timer.TimerEventListener;
+import com.frameWork.service.timer.TimerService;
+import com.frameWork.service.timer.TimerService.TimerEnum;
 
-public class LogService 
+public class LogService
 {
 	final static String s_logPath = "./Log/";
 	
-	static String LogName = "";
+	static String s_modelName = "LogService";
+	static String s_LogName = "";
 	
 	static List<LogInfo> s_LogList = new ArrayList<LogInfo>();
 	
@@ -36,9 +38,15 @@ public class LogService
 		Exception
 	}
 	
+	public static void Init()
+	{
+		LogServiceTimerListener lService = new LogServiceTimerListener();
+		TimerService.AddListener(TimerEnum.preDay, lService);
+	}
+	
 	static public void Log(String modelName,String LogConetnt)
 	{
-		if(ConfigLog.s_isDebug)
+		if(LogConfig.s_isDebug)
 		{
 			System.out.println(LogConetnt);
 		}
@@ -48,7 +56,7 @@ public class LogService
 	
 	static public void Warn(String modelName,String LogConetnt)
 	{
-		if(ConfigLog.s_isDebug)
+		if(LogConfig.s_isDebug)
 		{
 			System.out.println(LogConetnt);
 		}
@@ -58,7 +66,7 @@ public class LogService
 	
 	static public void Error(String modelName,String LogConetnt)
 	{
-		if(ConfigLog.s_isDebug)
+		if(LogConfig.s_isDebug)
 		{
 			System.err.println(LogConetnt);
 		}
@@ -68,7 +76,7 @@ public class LogService
 	
 	static public void Exception(String modelName,String LogConetnt , Exception e)
 	{
-		if(ConfigLog.s_isDebug)
+		if(LogConfig.s_isDebug)
 		{
 			System.err.println(LogConetnt);
 			e.printStackTrace();
@@ -89,17 +97,18 @@ public class LogService
 		
 		s_LogList.add(log);
 		
-		if(s_LogList.size() > ConfigLog.s_MaxLogCount)
+		if(s_LogList.size() > LogConfig.s_MaxLogCount)
 		{
 			SaveLog();
 		}
 	}
 	
 	//新的一天
-	static void NewDay()
+	public static void NewDay()
 	{
-		SaveLog();
+		LogService.Log(s_modelName, "NewDay");
 		
+		SaveLog();
 		NewLogFileStream();
 	}
 	
@@ -113,7 +122,7 @@ public class LogService
 		int month = cal.get(Calendar.MONTH);
 		int day   = cal.get(Calendar.DAY_OF_MONTH);
 		
-		LogName = "Log" + year+"" + month + "" + day;
+		s_LogName = "Log" + year+"" + month + "" + day;
 		
 		if(s_FileStream != null)
 		{
@@ -138,9 +147,9 @@ public class LogService
 		}
 		else
 		{
-			String l_path = s_logPath + LogName;
+			String l_path = s_logPath + s_LogName;
 			
-			String l_pathFile = s_logPath + LogName + "/" + modelName + ".txt";
+			String l_pathFile = s_logPath + s_LogName + "/" + modelName + ".txt";
 			
 			System.out.println(l_path);
 			
@@ -156,7 +165,7 @@ public class LogService
 				file.createNewFile();
 			}
 			
-			FileOutputStream stream = new FileOutputStream(l_pathFile);
+			FileOutputStream stream = new FileOutputStream(l_pathFile,true);
 			
 			s_FileStream.put(modelName, stream);
 			
@@ -241,6 +250,18 @@ public class LogService
 			e.printStackTrace();
 		}
 	}
+
+
+}
+
+class LogServiceTimerListener  implements TimerEventListener
+{
+	@Override
+	public void TimeEvent(TimerEvent event) 
+	{
+		LogService.NewDay();
+	}
+	
 }
 
 class LogInfo

@@ -11,14 +11,14 @@ public class DataBaseConfig extends ConfigServiceBase
 	static public String s_DataBaseName = "";
 	public static int s_dataBaseMaxRequest;
 	
-	public DataBaseConfig() 
+	public static void Init() 
 	{
 		m_configName = "DataBaseConfig";
 		
-		Init(m_configName);
-		
 		try 
 		{
+			SetConfigName(m_configName);
+			
 			s_DataBaseURL  = GetString("DataBaseURL"); 
 			s_DataBaseName = GetString("DataBaseName");
 			s_UserName     = GetString("UserName");
@@ -28,8 +28,7 @@ public class DataBaseConfig extends ConfigServiceBase
 		} 
 		catch (Exception e)
 		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("Config " + m_configName + " not find !");
 		}
 
 	}

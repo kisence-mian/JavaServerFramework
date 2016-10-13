@@ -8,7 +8,7 @@ public class SecretKeyConfig extends ConfigServiceBase
 	public static String RSA_public_key;
 	
 	
-	public SecretKeyConfig()
+	public static void Init() 
 	{
 		
 	}

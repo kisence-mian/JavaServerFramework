@@ -1,39 +1,35 @@
 package com.frameWork.service.config;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Properties;
 
 public class ConfigServiceBase 
 {
-	public String m_configName = "";
+	public static  String m_configName = "";
 	
-	Properties m_propertys;
+	static Properties m_propertys;
 	
-	public void Init(String l_configName)
+	public static void SetConfigName(String l_configName) throws IOException
 	{
 		m_configName = l_configName;
-		ConfigService.configs.put(m_configName, this);
 		
 		LoadConfig();
 	}
 	
-	public void LoadConfig()
+	public static  void LoadConfig() throws IOException
 	{
 		m_propertys = new Properties();  
 
-		try {
-			FileInputStream fis = new FileInputStream( ConfigService.configPath + m_configName + ".txt" );
-			m_propertys.load(fis);
-			
-			fis.close();
-		} 
-		catch(Exception e)
-		{
-			e.printStackTrace();
-		}
+		FileInputStream fis = new FileInputStream( ConfigService.configPath + m_configName + ".txt" );
+		m_propertys.load(fis);
+		
+		fis.close();
+
 	}
 	
-	public String GetString(String key) throws Exception 
+	public static String GetString(String key) throws Exception 
 	{
 		if(m_propertys != null)
 		{
@@ -45,7 +41,7 @@ public class ConfigServiceBase
 		}
 	}
 	
-	public int GetInt(String key) throws Exception
+	public static int GetInt(String key) throws Exception
 	{
 		if(m_propertys != null)
 		{
@@ -57,7 +53,7 @@ public class ConfigServiceBase
 		}
 	}
 	
-	public float GetFloat(String key) throws Exception
+	public static float GetFloat(String key) throws Exception
 	{
 		if(m_propertys != null)
 		{
@@ -69,7 +65,7 @@ public class ConfigServiceBase
 		}
 	}
 	
-	public boolean GetBool(String key) throws Exception
+	public static boolean GetBool(String key) throws Exception
 	{
 		
 		if(m_propertys != null)
