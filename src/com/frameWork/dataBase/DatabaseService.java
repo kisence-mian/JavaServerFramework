@@ -18,6 +18,7 @@ import com.frameWork.service.timer.TimerService.TimerEnum;
 public class DatabaseService 
 {
 	String m_ModelName = "DataBaseService";
+	String m_ErrorSql = "ErrorSQL";
 	
 	String m_DriverString ="com.mysql.jdbc.Driver";
 
@@ -165,7 +166,7 @@ public class DatabaseService
 		} 
 		catch ( Exception e)
 		{
-			e.printStackTrace();
+			LogService.Exception(m_ModelName, "ExecuteQuery Error", e);
 		}
 		finally
 		{
@@ -205,11 +206,16 @@ public class DatabaseService
 			} 
 			catch ( Exception e) 
 			{
+				
+				String ErrorSql = "";
 				for (int i = 0; i < m_SQLlist.size() &&  i < DataBaseConfig.s_dataBaseMaxRequest; i++) 
 	            { 
-					LogService.Error(m_ModelName , m_SQLlist.get(i));
+					ErrorSql += m_SQLlist.get(i) + "\n";
 	            }
 				
+				LogService.Error(m_ErrorSql      , ErrorSql);
+				
+				LogService.Error(    m_ModelName , "ErrorSql: :\n"+ErrorSql);
 				LogService.Exception(m_ModelName , "SQL Exception" + e.toString() , e );
 			}
 			finally
@@ -247,7 +253,7 @@ public class DatabaseService
 		} 
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			LogService.Exception(m_ModelName , "Ret2Map Error" + e.toString() , e );
 		}
 		
 		 return list;
@@ -261,7 +267,5 @@ class DataBaseTimerListener implements TimerEventListener
 	public void TimeEvent(TimerEvent event) 
 	{
 		DatabaseService.GetInstance().TimerTask();
-		
 	}
-	
 }

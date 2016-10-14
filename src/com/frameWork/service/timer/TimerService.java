@@ -7,8 +7,12 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.frameWork.service.LogService;
+
 public class TimerService 
 {
+	private final static String s_modelName = "TimerService";
+	
 	public enum TimerEnum 
 	{
 	    preSecond,
@@ -21,6 +25,7 @@ public class TimerService
 	}
 	
 	public static HashMap<TimerEnum, ArrayList<TimerEventListener>>  listeners = new HashMap<TimerEnum, ArrayList<TimerEventListener>>();
+	
 	
 	public TimerService()
 	{
@@ -121,8 +126,7 @@ public class TimerService
 				} 
 				catch (Exception e) 
 				{
-					System.out.println(e.toString());
-					e.printStackTrace();
+					LogService.Exception(s_modelName , "DispatchEvent Error", e);
 				}
 			}
 		}

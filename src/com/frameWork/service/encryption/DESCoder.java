@@ -20,7 +20,6 @@ import javax.crypto.spec.DESKeySpec;
  * Blowfish     		key size must be multiple of 8, and can only range from 32 to 448 (inclusive)
  * RC2          		key size must be between 40 and 1024 bits
  * RC4(ARCFOUR) 		key size must be between 40 and 1024 bits
- * 具体内容 需要关注 JDK Document http://.../docs/technotes/guides/security/SunProviders.html
  * </pre>
  * 
  */

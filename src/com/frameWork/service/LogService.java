@@ -250,8 +250,6 @@ public class LogService
 			e.printStackTrace();
 		}
 	}
-
-
 }
 
 class LogServiceTimerListener  implements TimerEventListener
@@ -261,7 +259,6 @@ class LogServiceTimerListener  implements TimerEventListener
 	{
 		LogService.NewDay();
 	}
-	
 }
 
 class LogInfo
