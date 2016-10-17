@@ -2,9 +2,7 @@ package com.frameWork.player;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
 import org.apache.mina.core.session.IoSession;
-
 import com.frameWork.service.LogService;
 import com.frameWork.service.message.MessageErrorEnum;
 import com.frameWork.service.message.MessageSendService;
@@ -112,7 +110,6 @@ public class PlayerManager
 		MessageSendService.SendErrorCode(player.m_session, LoginService.s_LoginMessageType, MessageErrorEnum.s_AccountOtherPlaceLogin);
 		
 		player.m_session.setAttribute(s_playerAttributeName, null);
-		
 	}
 	
 	

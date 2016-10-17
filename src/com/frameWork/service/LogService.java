@@ -106,10 +106,10 @@ public class LogService
 	//新的一天
 	public static void NewDay()
 	{
-		LogService.Log(s_modelName, "NewDay");
-		
 		SaveLog();
 		NewLogFileStream();
+		
+		LogService.Log(s_modelName, "NewDay " + s_LogName);
 	}
 	
 	static void NewLogFileStream()
