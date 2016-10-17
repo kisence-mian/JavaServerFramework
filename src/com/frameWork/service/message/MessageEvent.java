@@ -1,6 +1,7 @@
 package com.frameWork.service.message;
 
-import com.frameWork.model.Player;
+import com.frameWork.player.Player;
+
 import net.sf.json.JSONObject;
 
 public class MessageEvent 

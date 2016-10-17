@@ -5,11 +5,12 @@ import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 
-import com.frameWork.model.Player;
+import com.frameWork.player.LoginService;
+import com.frameWork.player.Player;
+import com.frameWork.player.PlayerManager;
 import com.frameWork.service.config.configs.SecretKeyConfig;
 import com.frameWork.service.encryption.EncryptionService;
 import com.frameWork.service.message.MessageEnum;
-import com.frameWork.service.message.MessageErrorEnum;
 import com.frameWork.service.message.MessageReceviceService;
 import com.frameWork.service.message.MessageSendService;
 
@@ -87,23 +88,16 @@ public class ServiceHandler extends IoHandlerAdapter
 			
 			messageType = jsonMessage.getString("MT");
 			
-			if((boolean)session.getAttribute("isLogin") == false) //如果未登录只能进行登陆操作
+			Player tmpPlayer = PlayerManager.GetPlayer(session);
+			
+			if(tmpPlayer == null) //如果未登录只能进行登陆操作
 			{
-				LoginService.Login(session, message);
+				LoginService.Login(session, jsonMessage);
 				//此处可以添加管理员登录分支
 			}
 			else
 			{
-				Player tmpPlayer = (Player)session.getAttribute("player");
-				
-				if(tmpPlayer == null)
-				{
-					MessageSendService.sendErrorCode(session, messageType, MessageErrorEnum.s_unkonwError);
-					LogService.Error(m_modelName, "DealMessage Player is null:"+ "\n"
-						                        	+"session: " + session.toString());
-					return;
-				}
-				
+				//派发消息
 				MessageReceviceService.ReceviceMessgae(messageType,tmpPlayer, jsonMessage);
 			}
 		}
@@ -112,7 +106,7 @@ public class ServiceHandler extends IoHandlerAdapter
 			LogService.Exception(m_modelName, "DealMessage :" + message + "\n"
 											+"session: " + session.toString(), e);
 			
-			MessageSendService.sendErrorCode(session, MessageEnum.s_MeaasgeType_Unkonw, MessageEnum.s_FailCode);
+			MessageSendService.SendErrorCode(session, MessageEnum.s_MeaasgeType_Unkonw, MessageEnum.s_FailCode);
 		}
 	}
 }

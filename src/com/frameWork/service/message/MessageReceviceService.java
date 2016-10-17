@@ -2,7 +2,8 @@ package com.frameWork.service.message;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import com.frameWork.model.Player;
+
+import com.frameWork.player.Player;
 import com.frameWork.service.LogService;
 import com.frameWork.service.encryption.EncryptionService;
 import net.sf.json.JSONObject;

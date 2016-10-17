@@ -1,16 +1,14 @@
 package com.frameWork.service.message;
 
 import org.apache.mina.core.session.IoSession;
-
 import com.frameWork.service.config.configs.SecretKeyConfig;
 import com.frameWork.service.encryption.EncryptionService;
 import net.sf.json.JSONObject;
 
-
 public class MessageSendService 
 {
 	
-	public static void sendSuccessCode(IoSession session,String MT) 
+	public static void SendSuccessCode(IoSession session,String MT) 
 	{
 		JSONObject jsonMes = new JSONObject();
 		jsonMes.put("MT"            , MT);
@@ -20,7 +18,7 @@ public class MessageSendService
 		Send(session,meString);
 	}
 	
-	public static void sendErrorCode(IoSession session,String MC,String errorCode)
+	public static void SendErrorCode(IoSession session,String MC,String errorCode)
 	{
 		JSONObject jsonMes = new JSONObject();
 		jsonMes.put("MC"            , MC);
@@ -30,16 +28,15 @@ public class MessageSendService
 		Send(session,meString);
 	}
 	
-	public static void sendMessage(IoSession session,JSONObject jsonMes) 
+	public static void SendMessage(IoSession session,JSONObject jsonMes) 
 	{
 		Send(session,jsonMes.toString());
 	}
 	
-	public static void sendMessageNoSafe(IoSession session,JSONObject jsonMes) 
+	public static void SendMessageNoSafe(IoSession session,JSONObject jsonMes) 
 	{
 		Send(session,jsonMes.toString());
 	}
-	
 	
 	//发送
 	public static void Send(IoSession session,String message)
@@ -53,7 +50,6 @@ public class MessageSendService
 			NoSafeSendMessage(session,message);
 		}
 	}
-	
 	
 	//不加密发送
 	static void NoSafeSendMessage(IoSession session,String message) 

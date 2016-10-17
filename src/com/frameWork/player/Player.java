@@ -1,4 +1,4 @@
-package com.frameWork.model;
+package com.frameWork.player;
 
 import org.apache.mina.core.session.IoSession;
 

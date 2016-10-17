@@ -2,6 +2,11 @@ package com.frameWork.service.message;
 
 public class MessageErrorEnum 
 {
-	public final static String s_errorMessageFormat = "errorMessageFormat";
-	public final static String s_unkonwError        = "unkonwError";
+	public final static String s_ErrorMessageFormat = "errorMessageFormat";
+	public final static String s_UnkonwError        = "unkonwError";
+	
+	//’À∫≈“Ïµÿµ«¬Ω
+	public final static String s_AccountOtherPlaceLogin  = "AccountOtherPlaceLogin";
+	
+	
 }
