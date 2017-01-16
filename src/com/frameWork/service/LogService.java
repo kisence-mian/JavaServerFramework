@@ -119,7 +119,7 @@ public class LogService
 		cal.setTime(currentDate);
 		
 		int year  = cal.get(Calendar.YEAR);
-		int month = cal.get(Calendar.MONTH);
+		int month = cal.get(Calendar.MONTH) + 1;
 		int day   = cal.get(Calendar.DAY_OF_MONTH);
 		
 		s_LogName = "Log" + year+"" + month + "" + day;
@@ -150,8 +150,6 @@ public class LogService
 			String l_path = s_logPath + s_LogName;
 			
 			String l_pathFile = s_logPath + s_LogName + "/" + modelName + ".txt";
-			
-			System.out.println(l_path);
 			
 			File file = new File(l_path);
 			
