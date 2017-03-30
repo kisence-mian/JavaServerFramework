@@ -4,7 +4,7 @@ import com.frameWork.service.config.ConfigServiceBase;
 
 public class ServiceConfig  extends ConfigServiceBase
 {
-	public static int s_Port = 23333;
+	public static int s_Port = 23334;
 	
 	public static void Init() 
 	{

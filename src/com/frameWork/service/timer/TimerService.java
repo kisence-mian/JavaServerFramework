@@ -95,7 +95,7 @@ public class TimerService
 			CreatTimerEvent(TimerEnum.preDay);
 		}
 		
-		if( IsNewWeek())
+		if(IsNewWeek())
 		{
 			CreatTimerEvent(TimerEnum.preWeek);
 		}
@@ -178,7 +178,7 @@ public class TimerService
 		
 		if(counterMinute >60)
 		{
-			counter10S = 0;
+			counterMinute = 0;
 			return true;
 		}
 		else
@@ -218,7 +218,7 @@ public class TimerService
 		Calendar cal = Calendar.getInstance();
 		
 		cal.setTime(today);
-		int day = cal.get(Calendar.DATE);
+		int day = cal.get(Calendar.DAY_OF_MONTH);
 		
 		if(day != lastDay)
 		{

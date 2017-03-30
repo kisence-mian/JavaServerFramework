@@ -41,7 +41,7 @@ public class LogService
 	public static void Init()
 	{
 		LogServiceTimerListener lService = new LogServiceTimerListener();
-		TimerService.AddListener(TimerEnum.preDay, lService);
+		TimerService.AddListener(TimerEnum.pre10S, lService);
 	}
 	
 	static public void Log(String modelName,String LogConetnt)
@@ -121,8 +121,9 @@ public class LogService
 		int year  = cal.get(Calendar.YEAR);
 		int month = cal.get(Calendar.MONTH) + 1;
 		int day   = cal.get(Calendar.DAY_OF_MONTH);
+		int sec   = cal.get(Calendar.SECOND);
 		
-		s_LogName = "Log" + year+"" + month + "" + day;
+		s_LogName = "Log" + year+"_" + month + "_" + day + sec;
 		
 		if(s_FileStream != null)
 		{
