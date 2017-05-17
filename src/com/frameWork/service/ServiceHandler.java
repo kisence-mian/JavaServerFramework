@@ -1,5 +1,7 @@
 package com.frameWork.service;
 
+import java.util.HashMap;
+
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
@@ -20,7 +22,7 @@ public class ServiceHandler extends IoHandlerAdapter
 {
 	public NioSocketAcceptor socketAcceptor;
 	String m_modelName = "ServiceHandler";
-
+	
 	public ServiceHandler()
 	{
 	}
@@ -74,7 +76,7 @@ public class ServiceHandler extends IoHandlerAdapter
 	}
 	
 	void DealMessage(IoSession session,String message)
-	{
+	{	
 		try 
 		{
 			//œ˚œ¢Ω‚√‹

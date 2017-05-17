@@ -1,4 +1,6 @@
 package com.frameWork.main;
+import java.util.StringTokenizer;
+
 import com.frameWork.service.LogService;
 import com.frameWork.service.Service;
 import com.frameWork.service.config.ConfigService;
@@ -12,6 +14,9 @@ public class Main
 		TimerService.Init();
 		LogService.Init();
 		Service.getInstance();
+		
+		StringTokenizer pas = new StringTokenizer(" public static void,main", " ,");
+		System.out.println(pas.countTokens());
 		
 //		System.out.println("3501");
 //		for (int i = 0; i <3501; i++) 

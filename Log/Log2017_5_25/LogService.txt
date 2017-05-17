@@ -1,0 +1,20 @@
+Tue May 02 17:59:05 CST 2017
+LogService    Log
+NewDay Log2017_5_25
+
+Tue May 02 18:08:05 CST 2017
+LogService    Log
+NewDay Log2017_5_25
+
+Tue May 02 18:19:05 CST 2017
+LogService    Log
+NewDay Log2017_5_25
+
+Tue May 02 18:30:05 CST 2017
+LogService    Log
+NewDay Log2017_5_25
+
+Tue May 02 18:45:05 CST 2017
+LogService    Log
+NewDay Log2017_5_25
+

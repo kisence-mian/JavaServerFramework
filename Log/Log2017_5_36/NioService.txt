@@ -1,0 +1,11 @@
+Wed May 03 10:15:56 CST 2017
+NioService    Log
+启动Socket监听  端口号：23334
+服务器版本 ： 2016/10/13 
+处理核心数： 4
+IPv4	DESKTOP-7ANOBKN/192.168.0.16
+IPv6	DESKTOP-7ANOBKN/fe80:0:0:0:1113:beb5:bd67:b532%7
+IPv6	DESKTOP-7ANOBKN/fe80:0:0:0:1cbb:a6fd:82b9:b2d6%13
+IPv6	DESKTOP-7ANOBKN/2001:0:9d38:6ab8:1cbb:a6fd:82b9:b2d6
+
+

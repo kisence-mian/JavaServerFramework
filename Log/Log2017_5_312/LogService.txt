@@ -1,0 +1,8 @@
+Wed May 03 10:06:12 CST 2017
+LogService    Log
+NewDay Log2017_5_312
+
+Wed May 03 10:17:12 CST 2017
+LogService    Log
+NewDay Log2017_5_312
+

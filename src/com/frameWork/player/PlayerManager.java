@@ -3,6 +3,8 @@ package com.frameWork.player;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.apache.mina.core.session.IoSession;
+import org.apache.mina.example.chat.client.SwingChatClient;
+
 import com.frameWork.service.LogService;
 import com.frameWork.service.message.MessageErrorEnum;
 import com.frameWork.service.message.MessageSendService;
@@ -116,6 +118,15 @@ public class PlayerManager
 	public static void AddListener(PlayerEventEnum timerType ,PlayerEventListener listener)
 	{
 		ArrayList<PlayerEventListener> list = null;
+		
+		int a = 1;
+		
+		char b = (char) a;
+		
+		int[] myA = {1,2,3,4,5};
+		
+		SwingChatClient aChatClient = new SwingChatClient();
+		
 		
 		if(!listeners.containsKey(timerType))
 		{
