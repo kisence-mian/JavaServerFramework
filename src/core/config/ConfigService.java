@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import core.log.LogService;
 
+//当文本为UTF-8有头时会报错，请去头保存
 public class ConfigService 
 {
 	public final static String configPath = "./Resources/Config/"; 
@@ -55,12 +56,22 @@ public class ConfigService
 		
 		if(properties != null)
 		{
+			String value =null;
 			try
 			{
-				return Integer.parseInt(  properties.getProperty(key));
+				 value = properties.getProperty(key);
+				return Integer.parseInt( value);
 			}
 			catch (Exception e) 
 			{
+				String keys="";
+				
+				for (String item : properties.stringPropertyNames()) 
+				{
+					keys+=item+" ";
+				}
+				
+				LogService.Error("","configName :"+configName+" key :"+key+ " value :"+value+" "+keys+"\nException :"+e);
 				return defaultValue;
 			}
 		}
@@ -82,6 +93,7 @@ public class ConfigService
 			}
 			catch (Exception e) 
 			{
+				LogService.Error("","configName :"+configName+" key :"+key+ "\nException :"+e);
 				return defaultValue;
 			}
 		}
@@ -102,6 +114,7 @@ public class ConfigService
 			}
 			catch (Exception e) 
 			{
+				LogService.Error("","configName :"+configName+" key :"+key+ "\nException :"+e);
 				return defaultValue;
 			}
 		}
@@ -127,6 +140,7 @@ public class ConfigService
 			}
 			catch (Exception e) 
 			{
+				LogService.Error("","configName :"+configName+" key :"+key+ "\nException :"+e);
 				return defaultValue;
 			}
 		}

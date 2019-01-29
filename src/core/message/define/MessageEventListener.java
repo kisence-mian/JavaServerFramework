@@ -1,4 +1,6 @@
-package core.message;
+package core.message.define;
+
+import core.message.module.MessageEvent;
 
 public interface MessageEventListener 
 {

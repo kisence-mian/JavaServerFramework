@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import core.dataBase.DatabaseService;
 import core.log.LogService;
+import service.CardGameServer;
 
 public class TimerService 
 {
@@ -27,7 +31,6 @@ public class TimerService
 	
 	public static HashMap<TimerEnum, ArrayList<TimerEventListener>>  listeners = new HashMap<TimerEnum, ArrayList<TimerEventListener>>();
 	
-	
 	public TimerService()
 	{
 	}
@@ -38,6 +41,7 @@ public class TimerService
         {
 		  Timer timer = new Timer();  //定时任务启动
 		  System.out.println("Timer启动");  
+		  DataBaseDataLoad();
 		  timer.schedule(new TimerTask()
 		  {
 		        public void run() 
@@ -71,9 +75,56 @@ public class TimerService
 		list.add(listener);
 	}
 	
+    private static final String TableName="ServerTime";
+    private static final String counterHour_Key="counterHour";
+    private static final String lastWeek_Key="lastWeek";
+    private static final String lastDay_Key="lastDay";
+    private static final String lastMounth_Key="lastMounth";
+    
+	private static void DataBaseDataLoad()
+	{
+//		String[] keys =new String[4];
+//		keys[0]=counterHour_Key;
+//		keys[1]=lastDay_Key;
+//		keys[2]=lastWeek_Key;		
+//		keys[3]=lastMounth_Key;
+		List<Map<String, Object>> resList=	DatabaseService.GetInstance().SelectData(TableName, null,"ID='" + CardGameServer.ServerName + "'");
+		if (resList!=null &&resList.size()>0)
+		{
+			Map<String, Object> keyValues = resList.get(0);
+			counterHour=(int)keyValues.get(counterHour_Key);
+			lastDay=(int)keyValues.get(lastDay_Key);
+			lastWeek=(int)keyValues.get(lastWeek_Key);
+			lastMounth=(int)keyValues.get(lastMounth_Key);
+		}else
+		{
+			IsNewHour();
+			IsNewDay();
+			IsNewWeek();
+			IsNewMonth();
+			String[] keys =new String[5];
+			 keys[0]="ID";
+			keys[1]=counterHour_Key;
+			keys[2]=lastDay_Key;
+			keys[3]=lastWeek_Key;		
+			keys[4]=lastMounth_Key;
+			Object[] values = new Object[5];
+			values[0]=CardGameServer.ServerName;
+			values[1]=counterHour;
+			values[2]=lastDay;
+			values[3]=lastWeek;
+			values[4]=lastMounth;
+			DatabaseService.GetInstance().InsertData(TableName, keys, values);
+		}
+	}
+	private static void DataBaseDataWrite(String key ,Object value)
+	{
+		DatabaseService.GetInstance().UpdateData(TableName, new String[]{key}, new Object[]{value}, " ID = '" + CardGameServer.ServerName + "'");
+	}
 	//该函数每秒调用
 	public static void TimerEvent()
 	{
+		
 		CreatTimerEvent(TimerEnum.preSecond);
 		
 		if(IsNew5S())
@@ -93,21 +144,25 @@ public class TimerService
 		
 		if(IsNewHour())
 		{
+			DataBaseDataWrite(counterHour_Key,counterHour);
 			CreatTimerEvent(TimerEnum.preHour);
 		}
 		
 		if(IsNewDay())
 		{
+			DataBaseDataWrite(lastDay_Key,lastDay);
 			CreatTimerEvent(TimerEnum.preDay);
 		}
 		
 		if(IsNewWeek())
 		{
+			DataBaseDataWrite(lastWeek_Key,lastWeek);
 			CreatTimerEvent(TimerEnum.preWeek);
 		}
 		
 		if(IsNewMonth())
 		{
+			DataBaseDataWrite(lastMounth_Key,lastMounth);
 			CreatTimerEvent(TimerEnum.preMonth);
 		}
 	}
@@ -132,13 +187,9 @@ public class TimerService
 				} 
 				catch (Exception e) 
 				{
-					LogService.Exception(s_modelName , "DispatchEvent Error", e);
+					LogService.Error(s_modelName , "TimerService DispatchEvent Error " +e.toString());
 				}
 			}
-		}
-		else 
-		{
-			return;
 		}
 	}
 	
@@ -182,7 +233,7 @@ public class TimerService
 	{
 		counterMinute ++;
 		
-		if(counterMinute >60)
+		if(counterMinute > 60)
 		{
 			counterMinute = 0;
 			return true;

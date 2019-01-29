@@ -4,11 +4,21 @@ import org.apache.mina.core.session.IoSession;
 
 import core.config.ConfigService;
 import core.log.LogService;
+import core.message.define.MessageBase;
+import core.message.define.MessageEnum;
 import core.message.encryption.EncryptionService;
 import net.sf.json.JSONObject;
 
 public class MessageSendService 
 {
+	public static void SendHeartBeat(IoSession session) 
+	{
+		JSONObject jsonMes = new JSONObject();
+		jsonMes.put("MT"            , MessageEnum.HeartBeatMessageType);
+		String meString = jsonMes.toString();
+		
+		Send(session,meString);
+	}
 	
 	public static void SendSuccessCode(IoSession session,String MT) 
 	{
@@ -32,10 +42,21 @@ public class MessageSendService
 	
 	public static void SendMessage(IoSession session,MessageBase msg) 
 	{
+		int code = 0;
+		
+		if(session.getAttribute("MsgCode") != null)
+		{
+			code = (int)session.getAttribute("MsgCode");
+		}
+		
 		JSONObject jo = new JSONObject();
 		jo.put("MT", msg.getClass().getSimpleName());
+		jo.put("MsgCode",  code );
 		jo.put("Content", "\"" + JSONObject.fromObject(msg).toString() + "\"");
-		LogService.Log("MessageSendService", "SendMessage ->" + jo.toString() + " session : "+ session);
+		
+		code++;
+		session.setAttribute("MsgCode", code);
+		
 		Send(session,jo.toString());
 	}
 	
@@ -67,7 +88,7 @@ public class MessageSendService
 	{
 		if(session != null)
 		{
-//			LogService.Log("MessageSendService", "NoSafeSendMessage SendMessage ->" + message);
+			LogService.Log("MessageSendService", "NoSafeSendMessage ->" + message);
 			
 			session.write(message);
 		}

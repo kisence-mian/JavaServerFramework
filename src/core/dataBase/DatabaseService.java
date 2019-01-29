@@ -39,7 +39,7 @@ public class DatabaseService {
 	}
 
 	// 增
-	public void InsertData(String tableName, String[] keys, String[] values) {
+	public void InsertData(String tableName, String[] keys, Object[] values) {
 		String SQL = "INSERT INTO " + m_DataBaseName + "." + tableName;
 
 		String Value = "";
@@ -54,18 +54,18 @@ public class DatabaseService {
 
 			}
 		}
-		
-		for (int i = 0; i < values.length; i++) {
-			Value +=values[i];
+		String[] vStrings =ObjectArray2SQLStringArray(values);
+		for (int i = 0; i < vStrings.length; i++) {
+			Value +=vStrings[i];
 
-			if (i != values.length - 1) {
+			if (i != vStrings.length - 1) {
 
 				Value += ",";
 
 			}
 		}
 
-		SQL = SQL + "(" + Keys + ")" + "VALUES" + "(" + Value + ");";
+		SQL = SQL + " (" + Keys + ")" + " VALUES " + "(" + Value + ");";
 
 		ExecuteUpdate(SQL);
 	}
@@ -80,19 +80,27 @@ public class DatabaseService {
 	}
 
 	// 改
-	public void UpdateData(String tableName, String[] keys,String[] Values, String where) {
+	public void UpdateData(String tableName, String[] keys,Object[] values, String where) {
 		String SQL = "UPDATE " + m_DataBaseName + "." + tableName + " set ";
 		String content = "";
-
+		String[] vStrings =ObjectArray2SQLStringArray(values);
 		for (int i = 0; i < keys.length; i++) {
-			content += keys[i] + " = " + Values[i];
+			content += keys[i] + " = " + vStrings[i];
 			
 			if (i != keys.length - 1) {
 				content += ",";
 			}
 		}
 	
-		SQL = SQL + content + " WHERE " + where;
+		if(where != null)
+		{
+			SQL = SQL + content + " WHERE " + where;
+		}
+		else {
+			SQL = SQL + content;
+		}
+		
+
 
 		ExecuteUpdate(SQL);
 	}
@@ -114,15 +122,33 @@ public class DatabaseService {
 			}
 		}
 
-		if (where != null && where != "") {
-			SQL = SQL + keyString + "FROM " + m_DataBaseName + "." + tableName + " WHERE " + where;
+		if (where != null && !where.equals("")) {
+			SQL = SQL + keyString + " FROM " + m_DataBaseName + "." + tableName + " WHERE " + where;
 		} else {
-			SQL = SQL + keyString + "FROM " + m_DataBaseName + "." + tableName;
+			SQL = SQL + keyString + " FROM " + m_DataBaseName + "." + tableName;
 		}
+		
+		SQL +=";";
 
 		return ExecuteQuery(SQL);
 	}
 
+	private String[] ObjectArray2SQLStringArray(Object[] values)
+	{
+		String[] sArray = new String[values.length];
+		for (int i = 0; i < values.length; i++) 
+		{
+			Object v =values[i];
+			if (v.getClass().equals(String.class)) 
+			{
+				sArray[i]="'"+v.toString()+"'";
+			}else
+			{
+				sArray[i]=v.toString();
+			}
+		}
+		return sArray;
+	}
 	// 查询数据库，返回结果
 	public List<Map<String, Object>> ExecuteQuery(String sql) {
 		List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
@@ -140,9 +166,14 @@ public class DatabaseService {
 			long useTime = (System.currentTimeMillis() - time) / 1000;
 			LogService.Log(m_ModelName, "数据库返回         用时" + useTime + "s");
 
-		} catch (Exception e) {
-			LogService.Exception(m_ModelName, "ExecuteQuery Error", e);
-		} finally {
+		} 
+		catch (Exception e) 
+		{
+			LogService.Exception(m_ModelName, "ExecuteQuery Error SQL:"+sql,  e);
+			return null;
+		} 
+		finally 
+		{
 			connection.close();
 		}
 
@@ -155,14 +186,16 @@ public class DatabaseService {
 		PooledConnection connection = null;
 
 		try {
-			long time = System.currentTimeMillis();
+//			long time = System.currentTimeMillis();
+			
+			LogService.Log(m_ModelName, "ExecuteUpdate->" + sql + "<-");
 
 			connection = DBManager.getConnection();
 			connection.executeUpdate(sql);
 
-			long useTime = (System.currentTimeMillis() - time) / 1000;
+//			long useTime = (System.currentTimeMillis() - time) / 1000;
 
-			LogService.Log(m_ModelName, "sql 操作成功 用时" + useTime + "s ");
+//			LogService.Log(m_ModelName, "sql 操作成功 用时" + useTime + "s ");
 		} catch (Exception e) {
 			connection.close();
 			LogService.Error(m_ModelName, "ErrorSql: :\n" + sql);
@@ -193,7 +226,6 @@ public class DatabaseService {
 
 				for (int i = 1; i <= columnCount; i++) {
 					map.put(md.getColumnName(i), rs.getObject(i));
-
 				}
 
 				list.add(map);

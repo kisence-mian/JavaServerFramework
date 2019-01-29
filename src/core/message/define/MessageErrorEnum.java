@@ -1,4 +1,4 @@
-package core.message;
+package core.message.define;
 
 public class MessageErrorEnum 
 {

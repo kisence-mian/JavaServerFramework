@@ -1,16 +1,19 @@
 package core.report;
 
-import java.util.HashMap;
-
 import core.player.PlayerBase;
+import core.report.model.ReportEventData;
+import core.report.model.ReportPayData;
+import core.report.model.ReportUserData;
 
 public interface IReportInterface 
 {
 	void Init();
 	
-	void Log(PlayerBase player, String eventKey,HashMap<String, String> data);
+	void ReportEvent(PlayerBase player, ReportEventData data);
 	
-	void UserData(PlayerBase player, HashMap<String, String> data);
+	void ReportUserData(PlayerBase player, ReportUserData data);
 	
-	void DeviceData(PlayerBase player, HashMap<String, String> data);
+	void ReportDeviceData(PlayerBase player, ReportUserData data);
+	
+	void ReportPay(PlayerBase player, ReportPayData data);
 }

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import org.apache.mina.core.session.IoSession;
 import core.log.LogService;
 import core.player.PlayerEvent.PlayerEventEnum;
+import user.service.login.LoginService;
 
 public class PlayerService 
 {
@@ -48,7 +49,7 @@ public class PlayerService
 		return s_Players;
 	}
 	
-	public static void NewPlayerRegister(PlayerBase player)
+	public static void DispatchNewPlayer(PlayerBase player)
 	{
 		PlayerEvent pEvent = new PlayerEvent();
 		pEvent.m_Player = player;
@@ -81,13 +82,16 @@ public class PlayerService
 			player = oldPlayer;
 		}
 		
+		return player;
+	}
+	
+	public static void DispatchPlayerLogin(PlayerBase player)
+	{
 		PlayerEvent pEvent = new PlayerEvent();
 		pEvent.m_Player = player;
 		pEvent.m_eventType = PlayerEventEnum.Login;
 		
 		DispatchEvent(pEvent);
-		
-		return player;
 	}
 	
 	//Íæ¼ÒÍË³ö
@@ -115,11 +119,17 @@ public class PlayerService
 	
 	static void OtherPlaceLogin(PlayerBase player)
 	{
+		LogService.Error("", "OtherPlaceLogin ->" + player.m_ID);
+		
 		PlayerEvent pEvent = new PlayerEvent();
 		pEvent.m_Player = player;
 		pEvent.m_eventType = PlayerEventEnum.Exit;
 		
 		DispatchEvent(pEvent);
+		
+		player.m_session.close(true);
+		
+//		LoginService.Instance.LoginOut(player.m_session);
 		
 //		MessageSendService.SendErrorCode(player.m_session, LoginService.s_LoginMessageType, MessageErrorEnum.s_AccountOtherPlaceLogin);
 		
@@ -127,19 +137,19 @@ public class PlayerService
 	}
 	
 	
-	public static void AddListener(PlayerEventEnum timerType ,PlayerEventListener listener)
+	public static void AddListener(PlayerEventEnum eventType ,PlayerEventListener listener)
 	{
 		ArrayList<PlayerEventListener> list = null;
 		
-		if(!listeners.containsKey(timerType))
+		if(!listeners.containsKey(eventType))
 		{
 			list = new ArrayList<PlayerEventListener>();
 			
-			listeners.put(timerType, list);
+			listeners.put(eventType, list);
 		}
 		else
 		{
-			list = listeners.get(timerType);
+			list = listeners.get(eventType);
 		}
 		
 		list.add(listener);
@@ -159,7 +169,7 @@ public class PlayerService
 				} 
 				catch (Exception e) 
 				{
-					LogService.Exception(s_modelName , "DispatchEvent Error", e);
+					LogService.Error(s_modelName , "PlayerService DispatchEvent Error");
 				}
 			}
 		}

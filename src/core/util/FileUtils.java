@@ -10,8 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import core.log.LogService;
-
 
 public class FileUtils {
 	//创建文件夹

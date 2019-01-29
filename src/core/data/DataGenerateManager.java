@@ -50,7 +50,8 @@ public class DataGenerateManager {
 		return allData;
 	}
 
-	public static <T extends DataGenerateBase> ArrayList<T> GetAllDataList(Class<T> c) {
+	public static <T extends DataGenerateBase> ArrayList<T> GetAllDataList(Class<T> c) 
+	{
 		String dataName = GetDataName(c);
 
 		if (!s_dict.containsKey(dataName)) {

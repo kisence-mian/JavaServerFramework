@@ -13,6 +13,11 @@ public class TimeUtil
 	
 	public static boolean IsToday(Date date)
 	{
+		if(date == null)
+		{
+			return false;
+		}
+		
 		return DateUtils.isSameDay(Now(),date);
 	}
 }

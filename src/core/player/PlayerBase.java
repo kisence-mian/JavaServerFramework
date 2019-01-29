@@ -7,7 +7,8 @@ import org.apache.mina.core.session.IoSession;
 
 import core.login.RuntimePlatform;
 
-public class PlayerBase {
+public class PlayerBase 
+{
 	public IoSession m_session = null;
 	public String m_ID = "";
 	public String nickName = "";
@@ -17,7 +18,10 @@ public class PlayerBase {
 
 	public RuntimePlatform platform;
 	public String deviceUniqueIdentifier;
-
+	
+	public String vsrsion; //°æ±¾ºÅ
+	public String channel; //ÇþµÀ
+	
 	public void setPlatform(RuntimePlatform platform) {
 		this.platform = platform;
 	}

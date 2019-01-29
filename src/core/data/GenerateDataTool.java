@@ -210,12 +210,16 @@ public class GenerateDataTool
     	String content = "";
     	
     	List<String> type = new ArrayList<String>(data.m_tableTypes.keySet());
-
+    	boolean isGenerateV2 = false;
+    	boolean isGenerateV3 = false;
+    	
+    	
 	      if (type.size() > 0)
 	      {
 	          for (int i = 1; i < data.TableKeys.size(); i++)
 	          {
 	              String key = data.TableKeys.get(i);
+	              FieldType fType = data.m_tableTypes.get(key);
 
 	              if (data.m_tableTypes.containsKey(key) 
 	            		  && data.m_tableTypes.get(key) == FieldType.Enum)
@@ -224,15 +228,19 @@ public class GenerateDataTool
 	                  content += "import " + GetPackageName(data.m_tableEnumTypes.get(key))  + ";\n";
 	              }
 	              
-	              if(key.equals("Vector3"))
-	              {
-	            	  content += "import core.data.Vector3;\n";
-	              }
+	              if(!isGenerateV3)
+		              if(fType == FieldType.Vector3 || fType == FieldType.Vector3Array)
+		              {
+		            	  isGenerateV3 = true;
+		            	  content += "import core.data.Vector3;\n";
+		              }
 	              
-	              if(key.equals("Vector2"))
-	              {
-	            	  content += "import core.data.Vector2;\n";
-	              }
+	              if(!isGenerateV2)
+		              if(fType == FieldType.Vector2 || fType == FieldType.Vector2Array)
+		              {
+		            	  isGenerateV2 = true;
+		            	  content += "import core.data.Vector2;\n";
+		              }
 	          }
 	      }
 	      

@@ -41,15 +41,25 @@ public class LanguageManager {
 		preferredLanguage = Enum.valueOf(SystemLanguage.class, preS);
 	}
 
-	public static String GetContentByKey(SystemLanguage language, String key) {
+	public static String GetContentByKey(SystemLanguage language, String key) 
+	{
+		return GetContentByKey(language, key, null);
+	}
+	public static String GetContentByKey(SystemLanguage language, String key,Object[] contentParams) 
+	{
 		String[] tempArr = key.split("/");
 		String contentID = tempArr[tempArr.length - 1];
 		String moduleName = key.replace('/', '_').replaceAll("_" + contentID, "");
 
-		return GetContent(language, moduleName, contentID);
+		return GetContent(language, moduleName, contentID,contentParams);
 	}
-
-	public static String GetContent(SystemLanguage language, String moduleName, String contentID) {
+	public static String GetContent(SystemLanguage language, String moduleName, String contentID)
+	{
+		return GetContent(language, moduleName, contentID,null);
+	}
+	
+	public static String GetContent(SystemLanguage language, String moduleName, String contentID,Object[] contentParams)
+	{
 		Init();
 		if (language== SystemLanguage.Chinese) {
 			language =SystemLanguage.ChineseSimplified;
@@ -58,7 +68,7 @@ public class LanguageManager {
 		{
 			language=preferredLanguage;
 		}
-		String reString = "";
+		String content = "";
 
 		Hashtable<String, Hashtable<String, String>> moduleDatas = null;
 
@@ -80,8 +90,12 @@ public class LanguageManager {
 			DataTable dTable = DataManager.GetData(fileName);
 
 			if (dTable == null) {
-				return "LanguageManager Error : dont find DataTable. SystemLanguage :" + language + " moduleName :"
+				
+				String error= "LanguageManager Error : dont find DataTable. SystemLanguage :" + language + " moduleName :"
 						+ moduleName + " contentID :" + contentID;
+				error+="\n"+"fileName :"+fileName;
+				LogService.Error("", error);
+				return "";
 			} else {
 				fileData = new Hashtable<String, String>();
 				for (SingleData d : dTable.values()) {
@@ -97,7 +111,7 @@ public class LanguageManager {
 							value =d.get(k);
 						}					
 					}
-//					LogService.Log("", "Key :"+key+"  Value"+value);
+					//LogService.Log("", "Key :"+key+"  Value"+value);
 					fileData.put(key.trim(),value.trim());
 				}			
 			}
@@ -111,15 +125,28 @@ public class LanguageManager {
 		}
 
 		if (fileData.containsKey(contentID)) {
-			reString = fileData.get(contentID);
-		} else {
-			reString = "LanguageManager Error : dont find content. SystemLanguage :" + language + " moduleName :"
+			content = fileData.get(contentID);
+		} 
+		else 
+		{
+
+			String error= "LanguageManager Error : dont find DataTable. SystemLanguage :" + language + " moduleName :"
 					+ moduleName + " contentID :" + contentID;
+			//error+="\n"+"fileName :"+fileName;
+			LogService.Error("", error);
+			return "";
 
 		}
 //		LogService.Log("", "Key : "+contentID+" Content :"+reString);
-
-		return reString;
+		 if (contentParams != null && contentParams.length > 0)
+	        {
+	            for (int i = 0; i < contentParams.length; i++)
+	            {
+	                String replaceTmp = "{" + i + "}";
+	                content = content.replace(replaceTmp, contentParams[i].toString());
+	            }
+	        }
+		return content;
 
 	}
 
